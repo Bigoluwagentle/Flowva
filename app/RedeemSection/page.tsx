@@ -1,16 +1,14 @@
 "use client";
 import React, { useState } from 'react';
 
-// 1. Added Interface to fix the red line and allow data from Supabase
 interface RedeemSectionProps {
-  points: number;
+  points?: number; 
 }
 
-const RedeemSection = ({ points }: RedeemSectionProps) => {
+const RedeemSection = ({ points = 0 }: RedeemSectionProps) => {
   const [filter, setFilter] = useState('All Rewards');
   
-  // Use the prop 'points' instead of a local variable
-  const userBalance = points; 
+  const userBalance = points ?? 0; 
 
   const allRewards = [
     { id: 1, title: '$5 Bank Transfer', icon: '💵', desc: 'The $5 equivalent will be transferred to your bank account.', pts: 5000, status: 'Locked' },
@@ -20,7 +18,6 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
     { id: 5, title: 'Grand Prize Entry', icon: '🏆', pts: 50000, desc: 'Entry into our monthly $50 grand prize draw.', status: 'Coming Soon' },
   ];
 
-  // Tab counts based on live balance
   const counts = {
     'All Rewards': allRewards.length,
     'Unlocked': allRewards.filter(r => userBalance >= r.pts && r.status !== 'Coming Soon').length,
@@ -28,7 +25,6 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
     'Coming Soon': allRewards.filter(r => r.status === 'Coming Soon').length
   };
 
-  // Filter Logic
   const filteredRewards = allRewards.filter(reward => {
     if (filter === 'All Rewards') return true;
     if (filter === 'Unlocked') return userBalance >= reward.pts && reward.status !== 'Coming Soon';
@@ -40,7 +36,6 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500 space-y-8">
       
-      {/* 1. TOTAL POINTS BALANCE HEADER - Syncs with Supabase */}
       <div className="bg-[#F9F8FF] border border-purple-100 p-8 rounded-[2rem] flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-5">
           <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-3xl shadow-sm border border-purple-50">
@@ -49,7 +44,7 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
           <div>
             <p className="text-[11px] uppercase tracking-[0.2em] font-black text-gray-400 mb-1">Total Points Balance</p>
             <p className="text-4xl font-black text-gray-900 leading-none">
-              {userBalance.toLocaleString()} <span className="text-xl font-bold text-gray-400 ml-1">pts</span>
+              {(userBalance ?? 0).toLocaleString()} <span className="text-xl font-bold text-gray-400 ml-1">pts</span>
             </p>
           </div>
         </div>
@@ -64,7 +59,6 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
         <h2 className="text-xl font-bold text-gray-800 tracking-tight">Redeem Your Points</h2>
       </div>
 
-      {/* 2. FUNCTIONAL FILTER TABS */}
       <div className="flex gap-8 border-b border-gray-100 mb-8 overflow-x-auto scrollbar-hide">
         {Object.entries(counts).map(([label, count]) => (
           <button 
@@ -87,7 +81,6 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
         ))}
       </div>
 
-      {/* 3. REWARD GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20">
         {filteredRewards.length > 0 ? (
           filteredRewards.map((reward) => (
@@ -104,12 +97,10 @@ const RedeemSection = ({ points }: RedeemSectionProps) => {
                 {reward.desc}
               </p>
               
-              {/* Point Requirement */}
               <div className="flex items-center gap-2 text-purple-600 font-black mb-8 text-[15px]">
-                 <span className="text-xl">⭐</span> {reward.pts.toLocaleString()} pts
+                 <span className="text-xl">⭐</span> {(reward.pts ?? 0).toLocaleString()} pts
               </div>
               
-              {/* Button state depends on balance and status */}
               <button 
                 disabled={userBalance < reward.pts || reward.status === 'Coming Soon'}
                 className={`w-full py-4 rounded-2xl font-black text-[13px] tracking-wide transition-all ${

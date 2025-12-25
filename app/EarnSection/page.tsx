@@ -9,9 +9,9 @@ const supabase = createClient(
 );
 
 interface EarnSectionProps {
-  points: number;
-  referrals: number;
-  setPoints?: React.Dispatch<React.SetStateAction<number>>; // Added this
+  points?: number;
+  referrals?: number;
+  setPoints?: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const EarnSection = ({ points = 0, referrals = 0, setPoints }: EarnSectionProps) => {
@@ -20,9 +20,11 @@ const EarnSection = ({ points = 0, referrals = 0, setPoints }: EarnSectionProps)
   const referralLink = "https://app.flowvahub.com/signup/?ref=ademo7544";
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(referralLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (typeof window !== "undefined") {
+      navigator.clipboard.writeText(referralLink);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   const handleDailyLogin = async () => {
@@ -36,9 +38,9 @@ const EarnSection = ({ points = 0, referrals = 0, setPoints }: EarnSectionProps)
         return;
       }
 
-      const newPoints = points + 10;
+      const currentPoints = points ?? 0;
+      const newPoints = currentPoints + 10;
 
-      // Update Supabase
       const { error } = await supabase
         .from('profiles')
         .update({ points: newPoints })
@@ -46,7 +48,6 @@ const EarnSection = ({ points = 0, referrals = 0, setPoints }: EarnSectionProps)
 
       if (error) throw error;
 
-      // Update Local UI State Instantly
       if (setPoints) {
         setPoints(newPoints);
       }

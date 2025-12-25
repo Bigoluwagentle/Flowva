@@ -5,7 +5,6 @@ import { createClient } from '@supabase/supabase-js';
 import EarnSection from '@/app/EarnSection/page';
 import RedeemSection from '@/app/RedeemSection/page';
 
-// Initialize Supabase Client
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
@@ -14,12 +13,10 @@ const supabase = createClient(
 const RewardsHub = () => {
   const [activeTab, setActiveTab] = useState<'earn' | 'redeem'>('earn');
   
-  // State for database values
   const [points, setPoints] = useState(0);
   const [referrals, setReferrals] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Fetch real data on load
   useEffect(() => {
     const fetchUserData = async () => {
       try {
